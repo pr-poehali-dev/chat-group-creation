@@ -13,31 +13,31 @@ const Index = () => {
   const [searchQuery, setSearchQuery] = useState('');
 
   const chats = [
-    { id: 1, name: 'Team Alpha', lastMessage: 'Новое сообщение', time: '14:23', unread: 2, encrypted: true },
-    { id: 2, name: 'Проект Beta', lastMessage: 'Документы готовы', time: '13:45', unread: 0, encrypted: true },
-    { id: 3, name: 'Общий чат', lastMessage: 'Встреча завтра в 10:00', time: '12:30', unread: 5, encrypted: true },
-    { id: 4, name: 'Разработка', lastMessage: 'Код отправлен на ревью', time: '11:15', unread: 1, encrypted: true }
+    { id: 1, name: 'Shadow Collective', lastMessage: 'Тайное послание', time: '23:47', unread: 2, encrypted: true },
+    { id: 2, name: 'Dark Council', lastMessage: 'Планы готовы', time: '22:15', unread: 0, encrypted: true },
+    { id: 3, name: 'Midnight Guild', lastMessage: 'Встреча в полночь', time: '21:30', unread: 5, encrypted: true },
+    { id: 4, name: 'Void Chambers', lastMessage: 'Код в тенях', time: '20:45', unread: 1, encrypted: true }
   ];
 
   const messages = [
-    { id: 1, user: 'Александр', message: 'Привет всем! Как дела с проектом?', time: '14:20', avatar: 'А' },
-    { id: 2, user: 'Мария', message: 'Все идет по плану. Завтра обсудим детали.', time: '14:21', avatar: 'М' },
-    { id: 3, user: 'Вы', message: 'Отлично! Жду встречи.', time: '14:23', avatar: 'В', isOwn: true }
+    { id: 1, user: 'Raven', message: 'Тени сгущаются... план готов к исполнению', time: '23:45', avatar: 'R' },
+    { id: 2, user: 'Nyx', message: 'Полночные врата открыты. Ждем сигнала.', time: '23:46', avatar: 'N' },
+    { id: 3, user: 'Вы', message: 'Да будет так. В темноте - сила.', time: '23:47', avatar: 'В', isOwn: true }
   ];
 
   return (
-    <div className="h-screen bg-gray-900 flex">
+    <div className="h-screen bg-black flex">
       {/* Sidebar */}
-      <div className="w-80 bg-gray-800 border-r border-gray-700 flex flex-col">
+      <div className="w-80 bg-gray-900 border-r border-purple-900/50 flex flex-col">
         {/* Header */}
-        <div className="p-4 border-b border-gray-700">
+        <div className="p-4 border-b border-purple-900/50">
           <div className="flex items-center justify-between mb-4">
-            <h1 className="text-xl font-semibold text-white">SecureChat</h1>
+            <h1 className="text-xl font-semibold text-purple-300">DarkCrypt</h1>
             <div className="flex gap-2">
-              <Button variant="ghost" size="sm" className="text-gray-400 hover:bg-gray-700">
+              <Button variant="ghost" size="sm" className="text-purple-400 hover:bg-black/50">
                 <Icon name="Settings" size={16} />
               </Button>
-              <Button variant="ghost" size="sm" className="text-gray-400 hover:bg-gray-700">
+              <Button variant="ghost" size="sm" className="text-purple-400 hover:bg-black/50">
                 <Icon name="Bell" size={16} />
               </Button>
             </div>
@@ -45,24 +45,24 @@ const Index = () => {
           
           {/* Search */}
           <div className="relative">
-            <Icon name="Search" size={16} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+            <Icon name="Search" size={16} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-purple-400" />
             <Input 
               placeholder="Поиск чатов и сообщений..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 bg-gray-700 border-gray-600 text-white placeholder:text-gray-400"
+              className="pl-10 bg-black/50 border-purple-800 text-purple-200 placeholder:text-purple-500"
             />
           </div>
         </div>
 
         {/* Navigation */}
-        <div className="p-4 border-b border-gray-700">
+        <div className="p-4 border-b border-purple-900/50">
           <div className="flex gap-2">
-            <Button variant="ghost" size="sm" className="text-green-400 bg-green-400/10">
+            <Button variant="ghost" size="sm" className="text-purple-400 bg-purple-400/10">
               <Icon name="MessageCircle" size={16} className="mr-2" />
               Чаты
             </Button>
-            <Button variant="ghost" size="sm" className="text-gray-400 hover:bg-gray-700">
+            <Button variant="ghost" size="sm" className="text-purple-400 hover:bg-black/50">
               <Icon name="Users" size={16} className="mr-2" />
               Группы
             </Button>
@@ -75,14 +75,14 @@ const Index = () => {
             {chats.map((chat, index) => (
               <Card 
                 key={chat.id}
-                className={`p-3 mb-2 cursor-pointer transition-all hover:bg-gray-700 ${
-                  selectedChat === index ? 'bg-gray-700 border-green-500' : 'bg-gray-800 border-gray-700'
+                className={`p-3 mb-2 cursor-pointer transition-all hover:bg-black/50 ${
+                  selectedChat === index ? 'bg-black/60 border-purple-500' : 'bg-black/30 border-gray-800'
                 }`}
                 onClick={() => setSelectedChat(index)}
               >
                 <div className="flex items-center gap-3">
                   <Avatar className="w-10 h-10">
-                    <AvatarFallback className="bg-green-600 text-white">
+                    <AvatarFallback className="bg-purple-700 text-purple-100">
                       {chat.name.charAt(0)}
                     </AvatarFallback>
                   </Avatar>
@@ -91,7 +91,7 @@ const Index = () => {
                       <h3 className="font-medium text-white truncate flex items-center gap-2">
                         {chat.name}
                         {chat.encrypted && (
-                          <Icon name="Lock" size={12} className="text-green-400" />
+                          <Icon name="Lock" size={12} className="text-purple-400" />
                         )}
                       </h3>
                       <span className="text-xs text-gray-400">{chat.time}</span>
@@ -99,7 +99,7 @@ const Index = () => {
                     <div className="flex items-center justify-between">
                       <p className="text-sm text-gray-400 truncate">{chat.lastMessage}</p>
                       {chat.unread > 0 && (
-                        <Badge className="bg-green-600 text-white text-xs px-2 py-0.5">
+                        <Badge className="bg-purple-600 text-purple-100 text-xs px-2 py-0.5">
                           {chat.unread}
                         </Badge>
                       )}
@@ -112,16 +112,16 @@ const Index = () => {
         </ScrollArea>
 
         {/* Profile */}
-        <div className="p-4 border-t border-gray-700">
+        <div className="p-4 border-t border-purple-900/50">
           <div className="flex items-center gap-3">
             <Avatar>
-              <AvatarFallback className="bg-blue-600 text-white">В</AvatarFallback>
+              <AvatarFallback className="bg-purple-800 text-purple-200">В</AvatarFallback>
             </Avatar>
             <div className="flex-1">
-              <p className="font-medium text-white">Ваш профиль</p>
-              <p className="text-sm text-gray-400">В сети</p>
+              <p className="font-medium text-purple-200">Dark Lord</p>
+              <p className="text-sm text-purple-400">В тенях</p>
             </div>
-            <Button variant="ghost" size="sm" className="text-gray-400 hover:bg-gray-700">
+            <Button variant="ghost" size="sm" className="text-purple-400 hover:bg-black/50">
               <Icon name="MoreHorizontal" size={16} />
             </Button>
           </div>
@@ -131,30 +131,24 @@ const Index = () => {
       {/* Main Chat Area */}
       <div className="flex-1 flex flex-col">
         {/* Chat Header */}
-        <div className="p-4 bg-gray-800 border-b border-gray-700">
+        <div className="p-4 bg-gray-900 border-b border-purple-900/50">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <Avatar>
-                <AvatarFallback className="bg-green-600 text-white">
+                <AvatarFallback className="bg-purple-700 text-purple-100">
                   {chats[selectedChat]?.name.charAt(0)}
                 </AvatarFallback>
               </Avatar>
               <div>
-                <h2 className="font-semibold text-white flex items-center gap-2">
+                <h2 className="font-semibold text-purple-200 flex items-center gap-2">
                   {chats[selectedChat]?.name}
-                  <Icon name="Lock" size={14} className="text-green-400" />
+                  <Icon name="Lock" size={14} className="text-purple-400" />
                 </h2>
-                <p className="text-sm text-gray-400">3 участника • Зашифрованный чат</p>
+                <p className="text-sm text-purple-400">3 темных души • Зашифровано в пустоте</p>
               </div>
             </div>
             <div className="flex gap-2">
-              <Button variant="ghost" size="sm" className="text-gray-400 hover:bg-gray-700">
-                <Icon name="Phone" size={16} />
-              </Button>
-              <Button variant="ghost" size="sm" className="text-gray-400 hover:bg-gray-700">
-                <Icon name="Video" size={16} />
-              </Button>
-              <Button variant="ghost" size="sm" className="text-gray-400 hover:bg-gray-700">
+              <Button variant="ghost" size="sm" className="text-purple-400 hover:bg-black/50">
                 <Icon name="Info" size={16} />
               </Button>
             </div>
@@ -168,28 +162,28 @@ const Index = () => {
               <div key={msg.id} className={`flex gap-3 ${msg.isOwn ? 'justify-end' : ''}`}>
                 {!msg.isOwn && (
                   <Avatar className="w-8 h-8">
-                    <AvatarFallback className="bg-blue-600 text-white text-sm">
+                    <AvatarFallback className="bg-purple-800 text-purple-200 text-sm">
                       {msg.avatar}
                     </AvatarFallback>
                   </Avatar>
                 )}
                 <div className={`max-w-xs lg:max-w-md ${msg.isOwn ? 'order-1' : ''}`}>
                   {!msg.isOwn && (
-                    <p className="text-sm font-medium text-gray-300 mb-1">{msg.user}</p>
+                    <p className="text-sm font-medium text-purple-300 mb-1">{msg.user}</p>
                   )}
-                  <Card className={`p-3 ${msg.isOwn ? 'bg-green-600 text-white' : 'bg-gray-700 text-gray-100'}`}>
+                  <Card className={`p-3 ${msg.isOwn ? 'bg-purple-700 text-purple-100' : 'bg-black/60 text-purple-200'}`}>
                     <p className="text-sm">{msg.message}</p>
                     <div className="flex items-center justify-between mt-2">
-                      <span className={`text-xs ${msg.isOwn ? 'text-green-100' : 'text-gray-400'}`}>
+                      <span className={`text-xs ${msg.isOwn ? 'text-purple-200' : 'text-purple-400'}`}>
                         {msg.time}
                       </span>
-                      <Icon name="Lock" size={10} className={msg.isOwn ? 'text-green-200' : 'text-gray-400'} />
+                      <Icon name="Lock" size={10} className={msg.isOwn ? 'text-purple-300' : 'text-purple-500'} />
                     </div>
                   </Card>
                 </div>
                 {msg.isOwn && (
                   <Avatar className="w-8 h-8">
-                    <AvatarFallback className="bg-green-600 text-white text-sm">
+                    <AvatarFallback className="bg-purple-800 text-purple-200 text-sm">
                       {msg.avatar}
                     </AvatarFallback>
                   </Avatar>
@@ -200,9 +194,9 @@ const Index = () => {
         </ScrollArea>
 
         {/* Message Input */}
-        <div className="p-4 bg-gray-800 border-t border-gray-700">
+        <div className="p-4 bg-gray-900 border-t border-purple-900/50">
           <div className="flex gap-3 items-end">
-            <Button variant="ghost" size="sm" className="text-gray-400 hover:bg-gray-700">
+            <Button variant="ghost" size="sm" className="text-purple-400 hover:bg-black/50">
               <Icon name="Paperclip" size={16} />
             </Button>
             <div className="flex-1">
@@ -210,15 +204,15 @@ const Index = () => {
                 placeholder="Введите сообщение..."
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
-                className="bg-gray-700 border-gray-600 text-white placeholder:text-gray-400"
+                className="bg-black/50 border-purple-800 text-purple-200 placeholder:text-purple-500"
                 onKeyPress={(e) => e.key === 'Enter' && message.trim() && setMessage('')}
               />
             </div>
-            <Button variant="ghost" size="sm" className="text-gray-400 hover:bg-gray-700">
+            <Button variant="ghost" size="sm" className="text-purple-400 hover:bg-black/50">
               <Icon name="Smile" size={16} />
             </Button>
             <Button 
-              className="bg-green-600 hover:bg-green-700 text-white"
+              className="bg-purple-700 hover:bg-purple-800 text-purple-100"
               disabled={!message.trim()}
               onClick={() => message.trim() && setMessage('')}
             >
@@ -226,9 +220,9 @@ const Index = () => {
             </Button>
           </div>
           <div className="flex items-center justify-center mt-2">
-            <Badge variant="secondary" className="bg-gray-700 text-green-400 text-xs">
+            <Badge variant="secondary" className="bg-black/60 text-purple-400 text-xs">
               <Icon name="Shield" size={10} className="mr-1" />
-              Сообщения защищены сквозным шифрованием
+              Послания скрыты в тенях вечности
             </Badge>
           </div>
         </div>
