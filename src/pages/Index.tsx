@@ -12,9 +12,14 @@ const Index = () => {
   const [message, setMessage] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [nickname, setNickname] = useState('');
-  const [showNicknameModal, setShowNicknameModal] = useState(true);
-  const [vpnStatus, setVpnStatus] = useState('connecting');
+  const [showNicknameModal, setShowNicknameModal] = useState(false);
+  const [vpnEnabled, setVpnEnabled] = useState(false);
+  const [vpnStatus, setVpnStatus] = useState('disconnected');
+  const [dnsEnabled, setDnsEnabled] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
   const [recordingType, setRecordingType] = useState<'voice' | 'video' | null>(null);
+  const [realIP] = useState(`192.168.${Math.floor(Math.random()*255)}.${Math.floor(Math.random()*255)}`);
+  const [vpnIP] = useState(`10.0.${Math.floor(Math.random()*255)}.${Math.floor(Math.random()*255)}`);
 
   const chats = [
     { id: 1, name: 'Безымянный #7731', lastMessage: 'Товар готов к отправке', time: '23:47', unread: 2, encrypted: true, hasVoice: true },
@@ -37,12 +42,34 @@ const Index = () => {
         {/* Header */}
         <div className="p-4 border-b border-gray-800">
           <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-2">
-              <h1 className="text-xl font-semibold text-gray-300">ShadowNet</h1>
-              <div className={`w-2 h-2 rounded-full ${
-                vpnStatus === 'connected' ? 'bg-purple-500' : 
-                vpnStatus === 'connecting' ? 'bg-yellow-500 animate-pulse' : 'bg-red-500'
-              }`}></div>
+            <div className="flex items-center justify-between w-full">
+              <div className="flex items-center gap-2">
+                <h1 className="text-xl font-semibold text-gray-300">ShadowNet</h1>
+                <div className={`w-2 h-2 rounded-full ${
+                  vpnEnabled && vpnStatus === 'connected' ? 'bg-purple-500' : 
+                  vpnEnabled && vpnStatus === 'connecting' ? 'bg-yellow-500 animate-pulse' : 'bg-gray-500'
+                }`}></div>
+              </div>
+              <div className="flex items-center gap-2">
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  className="text-gray-400 hover:bg-gray-700/50 px-2"
+                  onClick={() => setShowSettings(!showSettings)}
+                >
+                  <Icon name="Settings" size={14} />
+                </Button>
+                {!nickname && (
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    className="text-purple-400 hover:bg-gray-700/50 text-xs"
+                    onClick={() => setShowNicknameModal(true)}
+                  >
+                    Ник
+                  </Button>
+                )}
+              </div>
             </div>
             <div className="flex gap-2">
               <Button variant="ghost" size="sm" className="text-gray-400 hover:bg-gray-700/50">
@@ -66,21 +93,101 @@ const Index = () => {
           </div>
         </div>
 
-        {/* VPN Status & Navigation */}
-        <div className="p-4 border-b border-gray-800">
-          <div className="mb-3 p-2 bg-gray-800/50 rounded-lg">
-            <div className="flex items-center justify-between text-xs">
-              <span className="text-gray-400">VPN Status:</span>
+        {/* Settings Panel */}
+        {showSettings && (
+          <div className="p-4 border-b border-gray-800 bg-gray-900/50">
+            <h3 className="text-sm font-medium text-gray-300 mb-3">Настройки безопасности</h3>
+            
+            {/* VPN Toggle */}
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center gap-2">
+                <Icon name="Shield" size={14} className="text-gray-400" />
+                <span className="text-sm text-gray-300">VPN Туннель</span>
+              </div>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => {
+                  if (vpnEnabled) {
+                    setVpnEnabled(false);
+                    setVpnStatus('disconnected');
+                  } else {
+                    setVpnEnabled(true);
+                    setVpnStatus('connecting');
+                    setTimeout(() => setVpnStatus('connected'), 1500);
+                  }
+                }}
+                className={`text-xs px-3 ${
+                  vpnEnabled ? 'bg-purple-600 text-white hover:bg-purple-700' : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                }`}
+              >
+                {vpnEnabled ? 'ВКЛ' : 'ОФФ'}
+              </Button>
+            </div>
+
+            {/* DNS Toggle */}
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center gap-2">
+                <Icon name="Globe" size={14} className="text-gray-400" />
+                <span className="text-sm text-gray-300">DNS Сервер</span>
+              </div>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setDnsEnabled(!dnsEnabled)}
+                className={`text-xs px-3 ${
+                  dnsEnabled ? 'bg-blue-600 text-white hover:bg-blue-700' : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                }`}
+              >
+                {dnsEnabled ? 'ВКЛ' : 'ОФФ'}
+              </Button>
+            </div>
+
+            {/* Connection Info */}
+            <div className="p-2 bg-black/30 rounded text-xs text-gray-400">
+              <div className="flex justify-between mb-1">
+                <span>Текущий IP:</span>
+                <span className="text-gray-300">{vpnEnabled && vpnStatus === 'connected' ? vpnIP : realIP}</span>
+              </div>
+              <div className="flex justify-between mb-1">
+                <span>DNS:</span>
+                <span className="text-gray-300">{dnsEnabled ? '1.1.1.1' : 'Провайдер'}</span>
+              </div>
+              {vpnEnabled && vpnStatus === 'connected' && (
+                <div className="flex justify-between">
+                  <span>Нода:</span>
+                  <span className="text-purple-400">NL-{Math.floor(Math.random()*99)} | Шифрование: AES-256</span>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Status Bar */}
+        <div className="p-3 border-b border-gray-800">
+          <div className="flex items-center justify-between text-xs">
+            <div className="flex items-center gap-2">
+              <span className="text-gray-400">Статус:</span>
               <span className={`${
-                vpnStatus === 'connected' ? 'text-purple-400' : 
-                vpnStatus === 'connecting' ? 'text-yellow-400' : 'text-red-400'
+                vpnEnabled && vpnStatus === 'connected' ? 'text-purple-400' : 
+                vpnEnabled && vpnStatus === 'connecting' ? 'text-yellow-400' : 'text-gray-400'
               }`}>
-                {vpnStatus === 'connected' ? 'Защищено' : 
-                 vpnStatus === 'connecting' ? 'Подключение...' : 'Отключено'}
+                {vpnEnabled ? 
+                  (vpnStatus === 'connected' ? 'Защищено' : 'Подключение...') : 
+                  'Обычное соединение'
+                }
               </span>
             </div>
-            <div className="text-xs text-gray-500 mt-1">IP: 10.0.{Math.floor(Math.random()*255)}.{Math.floor(Math.random()*255)} | Node: DE-#{Math.floor(Math.random()*99)}</div>
+            <div className="flex items-center gap-1">
+              {!vpnEnabled && <Icon name="AlertTriangle" size={10} className="text-yellow-500" />}
+              {dnsEnabled && <Icon name="Globe" size={10} className="text-blue-400" />}
+              {vpnEnabled && vpnStatus === 'connected' && <Icon name="Shield" size={10} className="text-purple-400" />}
+            </div>
           </div>
+        </div>
+
+        {/* Navigation */}
+        <div className="p-4 border-b border-gray-800">
           <div className="flex gap-2">
             <Button variant="ghost" size="sm" className="text-gray-400 bg-gray-600/20">
               <Icon name="MessageCircle" size={16} className="mr-2" />
@@ -88,7 +195,7 @@ const Index = () => {
             </Button>
             <Button variant="ghost" size="sm" className="text-gray-500 hover:bg-gray-700/50">
               <Icon name="Users" size={16} className="mr-2" />
-              Ники
+              Онлайн
             </Button>
           </div>
         </div>
@@ -142,22 +249,43 @@ const Index = () => {
         <div className="p-4 border-t border-gray-800">
           <div className="flex items-center gap-3">
             <Avatar>
-              <AvatarFallback className="bg-purple-800 text-purple-200">
+              <AvatarFallback className={`${
+                nickname ? 'bg-purple-800 text-purple-200' : 'bg-gray-700 text-gray-400'
+              }`}>
                 {nickname ? nickname.charAt(0).toUpperCase() : '?'}
               </AvatarFallback>
             </Avatar>
             <div className="flex-1">
-              <p className="font-medium text-gray-300">{nickname || 'Ghost'}</p>
-              <p className="text-sm text-purple-400">Скрыт в сети</p>
+              <p className="font-medium text-gray-300">{nickname || 'Аноним'}</p>
+              <p className="text-sm text-gray-400">
+                {vpnEnabled && vpnStatus === 'connected' ? 'Скрыт в сети' : 'Обычное соединение'}
+              </p>
             </div>
-            <Button 
-              variant="ghost" 
-              size="sm" 
-              className="text-gray-400 hover:bg-gray-700/50"
-              onClick={() => setShowNicknameModal(true)}
-            >
-              <Icon name="Edit" size={16} />
-            </Button>
+            <div className="flex gap-1">
+              {nickname && (
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  className="text-gray-400 hover:bg-gray-700/50 px-2"
+                  onClick={() => setShowNicknameModal(true)}
+                >
+                  <Icon name="Edit" size={14} />
+                </Button>
+              )}
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="text-red-400 hover:bg-gray-700/50 px-2"
+                onClick={() => {
+                  setNickname('');
+                  setVpnEnabled(false);
+                  setVpnStatus('disconnected');
+                  setDnsEnabled(false);
+                }}
+              >
+                <Icon name="LogOut" size={14} />
+              </Button>
+            </div>
           </div>
         </div>
       </div>
@@ -297,10 +425,17 @@ const Index = () => {
           </div>
           <div className="flex items-center justify-center mt-2">
             <div className="flex items-center justify-center gap-4">
-              <Badge variant="secondary" className="bg-gray-800/60 text-purple-400 text-xs">
-                <Icon name="Shield" size={10} className="mr-1" />
-                VPN туннель активен
-              </Badge>
+              <Badge variant="secondary" className={`text-xs ${
+              vpnEnabled && vpnStatus === 'connected' ? 
+                'bg-purple-800/60 text-purple-400' : 
+                'bg-yellow-800/60 text-yellow-400'
+            }`}>
+              <Icon name={vpnEnabled && vpnStatus === 'connected' ? 'Shield' : 'AlertTriangle'} size={10} className="mr-1" />
+              {vpnEnabled && vpnStatus === 'connected' ? 
+                'VPN защищен' : 
+                'Обычное соединение - осторожно!'
+              }
+            </Badge>
               {recordingType && (
                 <Badge variant="secondary" className="bg-red-900/20 text-red-400 text-xs animate-pulse">
                   <Icon name={recordingType === 'voice' ? 'Mic' : 'Video'} size={10} className="mr-1" />
@@ -316,9 +451,9 @@ const Index = () => {
       {showNicknameModal && (
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
           <Card className="bg-gray-800 p-6 max-w-md w-full mx-4">
-            <h3 className="text-lg font-semibold text-gray-200 mb-4">Создать ник</h3>
+            <h3 className="text-lg font-semibold text-gray-200 mb-4">Псевдоним</h3>
             <p className="text-sm text-gray-400 mb-4">
-              Введите свой псевдоним для анонимного общения
+              Можно остаться анонимом или создать ник для удобства
             </p>
             <Input
               placeholder="Например: DarkPhoenix, Ghost777..."
@@ -331,24 +466,22 @@ const Index = () => {
                 onClick={() => {
                   if (nickname.trim()) {
                     setShowNicknameModal(false);
-                    setVpnStatus('connected');
                   }
                 }}
                 className="bg-purple-600 hover:bg-purple-700 text-white flex-1"
                 disabled={!nickname.trim()}
               >
-                Подключиться
+                Сохранить
               </Button>
               <Button 
                 variant="ghost" 
                 onClick={() => {
-                  setNickname('Ghost');
+                  setNickname('');
                   setShowNicknameModal(false);
-                  setVpnStatus('connected');
                 }}
                 className="text-gray-400"
               >
-                Как гость
+                Отмена
               </Button>
             </div>
           </Card>
@@ -358,13 +491,8 @@ const Index = () => {
   );
 
   useEffect(() => {
-    if (!showNicknameModal) {
-      const timer = setTimeout(() => {
-        setVpnStatus('connected');
-      }, 2000);
-      return () => clearTimeout(timer);
-    }
-  }, [showNicknameModal]);
+    // Автоподключение VPN отключено для выбора пользователя
+  }, []);
 };
 
 export default Index;
